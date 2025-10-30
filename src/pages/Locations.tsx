@@ -1,71 +1,36 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Tab } from "@mui/material";
 import PageHeader from "../components/reusable/PageHeader";
 import { useState } from "react";
+import TabChange from "../components/reusable/TabChange";
+import LocationInputBox from "../components/locations/LocationInputBox";
+import TabPanel from "../components/reusable/TabPanel";
+import LocationTable from "../components/locations/LocationTable";
 
 export default function locations() {
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [type, setType] = useState("");
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleTabChange = (_e: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   return (
     <Box width="100vw">
-      <PageHeader text="Įveskite vandens telkinį" />
-      <TextField
-        label="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        variant="outlined"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mx: "auto",
-          mt: 6,
-          width: "400px",
-        }}
-      />
-      <TextField
-        label="Address"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        variant="outlined"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mx: "auto",
-          mt: 6,
-          width: "400px",
-        }}
-      />
-      <TextField
-        label="Type"
-        value={type}
-        onChange={(e) => setType(e.target.value)}
-        variant="outlined"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mx: "auto",
-          mt: 6,
-          width: "400px",
-        }}
-      />
-      <Box sx={{ mt: 8 }} />
-      <Button
-        sx={{
-          border: "solid",
-          backgroundColor: "green",
-          display: "flex",
-          justifyContent: "center",
-          mx: "auto",
-        }}
-      >
-        Paspausk mane
-      </Button>
+      <Box>
+        <PageHeader text="Vandens telkiniai" />
+      </Box>
 
+      <TabChange tabValue={tabValue} handleTabChange={handleTabChange}>
+        <Tab label="Vietų sąrašas" id="location-tab-0" />
+        <Tab label="Pridėti vietą" id="location-tab-1" />
+      </TabChange>
       <Box sx={{ mt: 8 }} />
-      <Typography sx={{ display: "flex", alignItems: "center" }}>
-        {name + " " + address + " " + type}
-      </Typography>
+
+      <TabPanel value={tabValue} index={0}>
+        <LocationTable />
+      </TabPanel>
+      <TabPanel value={tabValue} index={1}>
+        <LocationInputBox />
+      </TabPanel>
     </Box>
   );
 }

@@ -52,7 +52,7 @@ export const SIDEBAR_DATA: SidebarItem[] = [
     link: "catches",
   },
   {
-    id: 5,
+    id: 6,
     icon: <InfoIcon />,
     text: "About",
     link: "about",
