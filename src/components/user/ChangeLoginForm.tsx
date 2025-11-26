@@ -27,17 +27,15 @@ export default function ChangeLoginForm() {
     if (password) changeData.password = password;
 
     changeLoginMutation.mutate(changeData, {
-      onSuccess: (data) => {
-        console.log("Success:", data);
+      onSuccess: () => {
         toast.success("Prisijungimo duomenys sėkmingai atnaujinti!");
         setUuid("");
         setEmail("");
         setUsername("");
         setPassword("");
       },
-      onError: (error) => {
-        console.error("Error:", error);
-        toast.error(`Klaida: ${error.message}`);
+      onError: () => {
+        toast.error("Nepavyko atnaujinti prisijungimo duomenų");
       },
     });
   };

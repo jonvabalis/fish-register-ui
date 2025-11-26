@@ -1,29 +1,28 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useState } from "react";
 import { BoxPaper } from "../reusable/BoxPaper";
-import { useLocationInput } from "../../api/locations/useLocationInput";
+import { useCreateSpecies } from "../../api/species/useCreateSpecies";
 import { toast } from "react-toastify";
 
-export default function LocationInputBox() {
+export default function CreateSpeciesForm() {
   const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [type, setType] = useState("");
+  const [description, setDescription] = useState("");
 
-  const locationInputMutation = useLocationInput();
+  const createMutation = useCreateSpecies();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    locationInputMutation.mutate(
-      { name, address, type },
+    createMutation.mutate(
+      { name, description },
       {
         onSuccess: () => {
-          toast.success("Telkinys sėkmingai pridėtas!");
+          toast.success("Rūšis sėkmingai pridėta!");
           setName("");
-          setAddress("");
-          setType("");
+          setDescription("");
         },
-        onError: () => {
-          toast.error("Nepavyko pridėti telkinio");
+        onError: (error) => {
+          console.error("Error:", error);
+          toast.error("Nepavyko pridėti rūšies");
         },
       }
     );
@@ -33,11 +32,11 @@ export default function LocationInputBox() {
     <BoxPaper>
       <Box component="form" onSubmit={handleSubmit}>
         <TextField
-          label="Telkinio pavadinimas"
+          label="Rūšies pavadinimas"
           value={name}
-          required
           onChange={(e) => setName(e.target.value)}
           variant="outlined"
+          required
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -47,25 +46,13 @@ export default function LocationInputBox() {
           }}
         />
         <TextField
-          label="Telkinio vieta"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          required
+          label="Aprašymas"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           variant="outlined"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mx: "auto",
-            mt: 6,
-            width: "400px",
-          }}
-        />
-        <TextField
-          label="Vandens telkinio tipas"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
           required
-          variant="outlined"
+          multiline
+          rows={4}
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -78,7 +65,7 @@ export default function LocationInputBox() {
         <Button
           variant="contained"
           type="submit"
-          disabled={locationInputMutation.isPending}
+          disabled={createMutation.isPending}
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -87,7 +74,7 @@ export default function LocationInputBox() {
             px: 4,
           }}
         >
-          {locationInputMutation.isPending ? "Siunčiama..." : "Pridėti telkinį"}
+          {createMutation.isPending ? "Siunčiama..." : "Pridėti rūšį"}
         </Button>
       </Box>
     </BoxPaper>

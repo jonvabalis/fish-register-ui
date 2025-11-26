@@ -16,16 +16,14 @@ export default function RegisterForm() {
     registerMutation.mutate(
       { email, username, password },
       {
-        onSuccess: (data) => {
-          console.log("Success:", data);
+        onSuccess: () => {
           toast.success("Vartotojas sėkmingai užregistruotas!");
           setEmail("");
           setUsername("");
           setPassword("");
         },
-        onError: (error) => {
-          console.error("Error:", error);
-          toast.error(`Klaida: ${error.message}`);
+        onError: () => {
+          toast.error("Nepavyko užregistruoti vartotojo");
         },
       }
     );

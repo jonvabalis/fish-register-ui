@@ -1,41 +1,62 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useState } from "react";
 import { BoxPaper } from "../reusable/BoxPaper";
-import { useLocationInput } from "../../api/locations/useLocationInput";
+import { useUpdateSpecies } from "../../api/species/useUpdateSpecies";
 import { toast } from "react-toastify";
 
-export default function LocationInputBox() {
+export default function UpdateSpeciesForm() {
+  const [uuid, setUuid] = useState("");
   const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [type, setType] = useState("");
+  const [description, setDescription] = useState("");
 
-  const locationInputMutation = useLocationInput();
+  const updateMutation = useUpdateSpecies();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    locationInputMutation.mutate(
-      { name, address, type },
-      {
-        onSuccess: () => {
-          toast.success("Telkinys sėkmingai pridėtas!");
-          setName("");
-          setAddress("");
-          setType("");
-        },
-        onError: () => {
-          toast.error("Nepavyko pridėti telkinio");
-        },
-      }
-    );
+
+    const updateData: {
+      uuid: string;
+      name?: string;
+      description?: string;
+    } = { uuid };
+
+    if (name) updateData.name = name;
+    if (description) updateData.description = description;
+
+    updateMutation.mutate(updateData, {
+      onSuccess: () => {
+        toast.success("Rūšis sėkmingai atnaujinta!");
+        setUuid("");
+        setName("");
+        setDescription("");
+      },
+      onError: (error) => {
+        console.error("Error:", error);
+        toast.error("Nepavyko atnaujinti rūšies");
+      },
+    });
   };
 
   return (
     <BoxPaper>
       <Box component="form" onSubmit={handleSubmit}>
         <TextField
-          label="Telkinio pavadinimas"
-          value={name}
+          label="Rūšies UUID (privaloma)"
+          value={uuid}
+          onChange={(e) => setUuid(e.target.value)}
+          variant="outlined"
           required
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mx: "auto",
+            mt: 6,
+            width: "400px",
+          }}
+        />
+        <TextField
+          label="Naujas pavadinimas (neprivaloma)"
+          value={name}
           onChange={(e) => setName(e.target.value)}
           variant="outlined"
           sx={{
@@ -47,25 +68,12 @@ export default function LocationInputBox() {
           }}
         />
         <TextField
-          label="Telkinio vieta"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          required
+          label="Naujas aprašymas (neprivaloma)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           variant="outlined"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mx: "auto",
-            mt: 6,
-            width: "400px",
-          }}
-        />
-        <TextField
-          label="Vandens telkinio tipas"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          required
-          variant="outlined"
+          multiline
+          rows={4}
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -78,7 +86,7 @@ export default function LocationInputBox() {
         <Button
           variant="contained"
           type="submit"
-          disabled={locationInputMutation.isPending}
+          disabled={updateMutation.isPending}
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -87,7 +95,7 @@ export default function LocationInputBox() {
             px: 4,
           }}
         >
-          {locationInputMutation.isPending ? "Siunčiama..." : "Pridėti telkinį"}
+          {updateMutation.isPending ? "Atnaujinama..." : "Atnaujinti rūšį"}
         </Button>
       </Box>
     </BoxPaper>

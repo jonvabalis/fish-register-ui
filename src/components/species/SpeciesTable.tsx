@@ -12,25 +12,25 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useGetUsers } from "../../api/user/useGetUsers";
-import { useDeleteUser } from "../../api/user/useDeleteUser";
+import { useGetSpecies } from "../../api/species/useGetSpecies";
+import { useDeleteSpecies } from "../../api/species/useDeleteSpecies";
 import { BoxPaper } from "../reusable/BoxPaper";
 import { toast } from "react-toastify";
 
-export default function UsersTable() {
-  const { data, isLoading, isError, error } = useGetUsers();
-  const deleteMutation = useDeleteUser();
+export default function SpeciesTable() {
+  const { data, isLoading, isError, error } = useGetSpecies();
+  const deleteMutation = useDeleteSpecies();
 
-  const handleDelete = (uuid: string) => {
-    if (window.confirm("Ar tikrai norite ištrinti šį vartotoją?")) {
+  const handleDelete = (uuid: string, name: string) => {
+    if (window.confirm(`Ar tikrai norite ištrinti rūšį "${name}"?`)) {
       deleteMutation.mutate(
         { uuid },
         {
           onSuccess: () => {
-            toast.success("Vartotojas sėkmingai ištrintas!");
+            toast.success("Rūšis sėkmingai ištrinta!");
           },
           onError: () => {
-            toast.error("Nepavyko ištrinti vartotojo");
+            toast.error("Nepavyko ištrinti rūšies");
           },
         }
       );
@@ -50,17 +50,15 @@ export default function UsersTable() {
   if (isError) {
     return (
       <BoxPaper>
-        <Alert severity="error">
-          Klaida įkeliant vartotojus: {error?.message}
-        </Alert>
+        <Alert severity="error">Klaida įkeliant rūšis: {error?.message}</Alert>
       </BoxPaper>
     );
   }
 
-  if (!data?.users || data.users.length === 0) {
+  if (!data?.species || data.species.length === 0) {
     return (
       <BoxPaper>
-        <Alert severity="info">Vartotojų nerasta</Alert>
+        <Alert severity="info">Rūšių nerasta</Alert>
       </BoxPaper>
     );
   }
@@ -68,30 +66,30 @@ export default function UsersTable() {
   return (
     <BoxPaper>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="users table">
+        <Table sx={{ minWidth: 650 }} aria-label="species table">
           <TableHead>
             <TableRow>
               <TableCell>UUID</TableCell>
-              <TableCell>El. paštas</TableCell>
-              <TableCell>Vartotojo vardas</TableCell>
+              <TableCell>Pavadinimas</TableCell>
+              <TableCell>Aprašymas</TableCell>
               <TableCell align="center">Veiksmai</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.users.map((user) => (
+            {data.species.map((species) => (
               <TableRow
-                key={user.uuid}
+                key={species.uuid}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {user.uuid}
+                  {species.uuid}
                 </TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.username}</TableCell>
+                <TableCell>{species.name}</TableCell>
+                <TableCell>{species.description}</TableCell>
                 <TableCell align="center">
                   <IconButton
                     color="error"
-                    onClick={() => handleDelete(user.uuid)}
+                    onClick={() => handleDelete(species.uuid, species.name)}
                     disabled={deleteMutation.isPending}
                   >
                     <DeleteIcon />
