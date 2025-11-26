@@ -1,27 +1,27 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useState } from "react";
 import { BoxPaper } from "../reusable/BoxPaper";
-import { useLocationInput } from "../../api/locations/useLocationInput";
+import { useRegisterUser } from "../../api/user/useRegisterUser";
 import { toast } from "react-toastify";
 
-export default function LocationInputBox() {
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [type, setType] = useState("");
+export default function RegisterForm() {
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const locationInputMutation = useLocationInput();
+  const registerMutation = useRegisterUser();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    locationInputMutation.mutate(
-      { name, address, type },
+    registerMutation.mutate(
+      { email, username, password },
       {
         onSuccess: (data) => {
           console.log("Success:", data);
-          toast.success("Telkinys sėkmingai pridėtas!");
-          setName("");
-          setAddress("");
-          setType("");
+          toast.success("Vartotojas sėkmingai užregistruotas!");
+          setEmail("");
+          setUsername("");
+          setPassword("");
         },
         onError: (error) => {
           console.error("Error:", error);
@@ -35,11 +35,12 @@ export default function LocationInputBox() {
     <BoxPaper>
       <Box component="form" onSubmit={handleSubmit}>
         <TextField
-          label="Telkinio pavadinimas"
-          value={name}
-          required
-          onChange={(e) => setName(e.target.value)}
+          label="El. paštas"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           variant="outlined"
+          required
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -49,11 +50,11 @@ export default function LocationInputBox() {
           }}
         />
         <TextField
-          label="Telkinio vieta"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          required
+          label="Vartotojo vardas"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           variant="outlined"
+          required
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -63,11 +64,12 @@ export default function LocationInputBox() {
           }}
         />
         <TextField
-          label="Vandens telkinio tipas"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          required
+          label="Slaptažodis"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           variant="outlined"
+          required
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -80,7 +82,7 @@ export default function LocationInputBox() {
         <Button
           variant="contained"
           type="submit"
-          disabled={locationInputMutation.isPending}
+          disabled={registerMutation.isPending}
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -89,7 +91,7 @@ export default function LocationInputBox() {
             px: 4,
           }}
         >
-          {locationInputMutation.isPending ? "Siunčiama..." : "Pridėti telkinį"}
+          {registerMutation.isPending ? "Registruojama..." : "Registruotis"}
         </Button>
       </Box>
     </BoxPaper>

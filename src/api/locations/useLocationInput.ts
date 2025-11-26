@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 interface LocationInput {
@@ -8,6 +8,8 @@ interface LocationInput {
 }
 
 export const useLocationInput = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<string, Error, LocationInput>({
     mutationFn: async (location: LocationInput) => {
       const { data } = await axios.post<string>(
@@ -15,6 +17,9 @@ export const useLocationInput = () => {
         location
       );
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["locations"] });
     },
   });
 };

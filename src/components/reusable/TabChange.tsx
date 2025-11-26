@@ -1,4 +1,4 @@
-import { Box, Tabs, Tab } from "@mui/material";
+import { Box, Tabs } from "@mui/material";
 import { BoxPaper } from "./BoxPaper";
 import type { ReactNode } from "react";
 
