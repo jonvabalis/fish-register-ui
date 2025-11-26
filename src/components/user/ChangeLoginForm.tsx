@@ -1,7 +1,8 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { BoxPaper } from "../reusable/BoxPaper";
 import { useChangeLogin } from "../../api/user/useChangeLogin";
+import { useGetUsers } from "../../api/user/useGetUsers";
 import { toast } from "react-toastify";
 
 export default function ChangeLoginForm() {
@@ -11,6 +12,7 @@ export default function ChangeLoginForm() {
   const [password, setPassword] = useState("");
 
   const changeLoginMutation = useChangeLogin();
+  const { data: usersData } = useGetUsers();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,7 +46,8 @@ export default function ChangeLoginForm() {
     <BoxPaper>
       <Box component="form" onSubmit={handleSubmit}>
         <TextField
-          label="Vartotojo UUID (privaloma)"
+          select
+          label="Pasirinkite vartotoją"
           value={uuid}
           onChange={(e) => setUuid(e.target.value)}
           variant="outlined"
@@ -56,7 +59,13 @@ export default function ChangeLoginForm() {
             mt: 6,
             width: "400px",
           }}
-        />
+        >
+          {usersData?.users?.map((user) => (
+            <MenuItem key={user.uuid} value={user.uuid}>
+              {user.username} ({user.email})
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField
           label="Naujas el. paštas (neprivaloma)"
           type="email"

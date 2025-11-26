@@ -1,7 +1,8 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { BoxPaper } from "../reusable/BoxPaper";
 import { useUpdateSpecies } from "../../api/species/useUpdateSpecies";
+import { useGetSpecies } from "../../api/species/useGetSpecies";
 import { toast } from "react-toastify";
 
 export default function UpdateSpeciesForm() {
@@ -10,6 +11,7 @@ export default function UpdateSpeciesForm() {
   const [description, setDescription] = useState("");
 
   const updateMutation = useUpdateSpecies();
+  const { data: speciesData } = useGetSpecies();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,7 +43,8 @@ export default function UpdateSpeciesForm() {
     <BoxPaper>
       <Box component="form" onSubmit={handleSubmit}>
         <TextField
-          label="Rūšies UUID (privaloma)"
+          select
+          label="Pasirinkite rūšį"
           value={uuid}
           onChange={(e) => setUuid(e.target.value)}
           variant="outlined"
@@ -53,7 +56,13 @@ export default function UpdateSpeciesForm() {
             mt: 6,
             width: "400px",
           }}
-        />
+        >
+          {speciesData?.species?.map((species) => (
+            <MenuItem key={species.uuid} value={species.uuid}>
+              {species.name}
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField
           label="Naujas pavadinimas (neprivaloma)"
           value={name}
