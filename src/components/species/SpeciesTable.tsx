@@ -10,16 +10,72 @@ import {
   Alert,
   Box,
   IconButton,
+  Button,
+  TextField,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { useState, useEffect } from "react";
 import { useGetSpecies } from "../../api/species/useGetSpecies";
 import { useDeleteSpecies } from "../../api/species/useDeleteSpecies";
+import { useUpdateSpecies } from "../../api/species/useUpdateSpecies";
 import { BoxPaper } from "../reusable/BoxPaper";
 import { toast } from "react-toastify";
 
 export default function SpeciesTable() {
+  const [editingSpeciesUUID, setEditingSpeciesUUID] = useState("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+
   const { data, isLoading, isError, error } = useGetSpecies();
   const deleteMutation = useDeleteSpecies();
+  const updateMutation = useUpdateSpecies();
+
+  useEffect(() => {
+    if (editingSpeciesUUID && data) {
+      const species = data.species.find((s) => s.uuid === editingSpeciesUUID);
+      if (species) {
+        setName(species.name || "");
+        setDescription(species.description || "");
+      }
+    }
+  }, [editingSpeciesUUID, data]);
+
+  const handleEdit = (speciesUUID: string) => {
+    setEditingSpeciesUUID(speciesUUID);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingSpeciesUUID("");
+    setName("");
+    setDescription("");
+  };
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!editingSpeciesUUID) {
+      toast.error("Pasirinkite rūšį");
+      return;
+    }
+
+    updateMutation.mutate(
+      {
+        uuid: editingSpeciesUUID,
+        name: name || undefined,
+        description: description || undefined,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Rūšis sėkmingai atnaujinta!");
+          handleCancelEdit();
+        },
+        onError: () => {
+          toast.error("Nepavyko atnaujinti rūšies");
+        },
+      }
+    );
+  };
 
   const handleDelete = (uuid: string, name: string) => {
     if (window.confirm(`Ar tikrai norite ištrinti rūšį "${name}"?`)) {
@@ -88,9 +144,20 @@ export default function SpeciesTable() {
                 <TableCell>{species.description}</TableCell>
                 <TableCell align="center">
                   <IconButton
+                    color="primary"
+                    onClick={() => handleEdit(species.uuid)}
+                    disabled={
+                      deleteMutation.isPending || updateMutation.isPending
+                    }
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
                     color="error"
                     onClick={() => handleDelete(species.uuid, species.name)}
-                    disabled={deleteMutation.isPending}
+                    disabled={
+                      deleteMutation.isPending || updateMutation.isPending
+                    }
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -100,6 +167,59 @@ export default function SpeciesTable() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {editingSpeciesUUID && data && (
+        <Box
+          sx={{
+            mt: 4,
+            p: 3,
+            border: "2px solid",
+            borderColor: "primary.main",
+            borderRadius: 2,
+          }}
+        >
+          <form onSubmit={handleUpdate}>
+            <TextField
+              label="Pavadinimas"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+
+            <TextField
+              label="Aprašymas"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              fullWidth
+              margin="normal"
+              multiline
+              rows={3}
+            />
+
+            <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={updateMutation.isPending}
+              >
+                Atnaujinti rūšį
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                fullWidth
+                onClick={handleCancelEdit}
+                disabled={updateMutation.isPending}
+              >
+                Atšaukti
+              </Button>
+            </Box>
+          </form>
+        </Box>
+      )}
     </BoxPaper>
   );
 }

@@ -5,7 +5,6 @@ import TabChange from "../components/reusable/TabChange";
 import TabPanel from "../components/reusable/TabPanel";
 import SpeciesTable from "../components/species/SpeciesTable";
 import CreateSpeciesForm from "../components/species/CreateSpeciesForm";
-import UpdateSpeciesForm from "../components/species/UpdateSpeciesForm";
 import LocationSpeciesForm from "../components/species/LocationSpeciesForm";
 import LocationSpeciesTable from "../components/species/LocationSpeciesTable";
 
@@ -25,9 +24,8 @@ export default function Species() {
       <TabChange tabValue={tabValue} handleTabChange={handleTabChange}>
         <Tab label="Rūšių sąrašas" id="species-tab-0" />
         <Tab label="Pridėti rūšį" id="species-tab-1" />
-        <Tab label="Atnaujinti rūšį" id="species-tab-2" />
-        <Tab label="Pridėti rūšį prie telkinio" id="species-tab-3" />
-        <Tab label="Telkinio rūšys" id="species-tab-4" />
+        <Tab label="Pridėti rūšį prie telkinio" id="species-tab-2" />
+        <Tab label="Telkinio rūšys" id="species-tab-3" />
       </TabChange>
       <Box sx={{ mt: 8 }} />
 
@@ -40,14 +38,10 @@ export default function Species() {
       </TabPanel>
 
       <TabPanel value={tabValue} index={2}>
-        <UpdateSpeciesForm />
-      </TabPanel>
-
-      <TabPanel value={tabValue} index={3}>
         <LocationSpeciesForm />
       </TabPanel>
 
-      <TabPanel value={tabValue} index={4}>
+      <TabPanel value={tabValue} index={3}>
         <LocationSpeciesTable />
       </TabPanel>
     </Box>
