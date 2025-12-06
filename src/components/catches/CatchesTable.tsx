@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { useDeleteCatch } from "../../api/catches/useDeleteCatch";
 import { useUpdateCatch } from "../../api/catches/useUpdateCatch";
@@ -40,6 +40,7 @@ const CatchesTable = () => {
   const [selectedSpeciesUUID, setSelectedSpeciesUUID] = useState<string>("");
   const [selectedLocationUUID, setSelectedLocationUUID] = useState<string>("");
   const [selectedRodUUID, setSelectedRodUUID] = useState<string>("");
+  const editFormRef = useRef<HTMLDivElement>(null);
 
   const { data: usersData } = useGetUsers();
   const { data: catchesData, isLoading } =
@@ -70,6 +71,12 @@ const CatchesTable = () => {
 
   const handleEdit = (catchUUID: string) => {
     setEditingCatchUUID(catchUUID);
+    setTimeout(() => {
+      editFormRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }, 50);
   };
 
   const handleCancelEdit = () => {
@@ -270,6 +277,7 @@ const CatchesTable = () => {
 
       {editingCatchUUID && catchesData && (
         <Box
+          ref={editFormRef}
           sx={{
             mt: 4,
             p: 3,

@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGetRodsByUser } from "../../api/rods/useGetRodsByUser";
 import { useDeleteRod } from "../../api/rods/useDeleteRod";
 import { useUpdateRod } from "../../api/rods/useUpdateRod";
@@ -30,6 +30,7 @@ export default function RodsTable() {
   const [nickname, setNickname] = useState("");
   const [brand, setBrand] = useState("");
   const [purchasePlace, setPurchasePlace] = useState("");
+  const editFormRef = useRef<HTMLDivElement>(null);
 
   const { data: usersData } = useGetUsers();
   const { data, isLoading, isError, error } =
@@ -50,6 +51,12 @@ export default function RodsTable() {
 
   const handleEdit = (rodUUID: string) => {
     setEditingRodUUID(rodUUID);
+    setTimeout(() => {
+      editFormRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }, 50);
   };
 
   const handleCancelEdit = () => {
@@ -194,6 +201,7 @@ export default function RodsTable() {
 
       {editingRodUUID && data && (
         <Box
+          ref={editFormRef}
           sx={{
             mt: 4,
             p: 3,

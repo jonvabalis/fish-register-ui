@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGetSpecies } from "../../api/species/useGetSpecies";
 import { useDeleteSpecies } from "../../api/species/useDeleteSpecies";
 import { useUpdateSpecies } from "../../api/species/useUpdateSpecies";
@@ -26,6 +26,7 @@ export default function SpeciesTable() {
   const [editingSpeciesUUID, setEditingSpeciesUUID] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const editFormRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, isError, error } = useGetSpecies();
   const deleteMutation = useDeleteSpecies();
@@ -43,6 +44,12 @@ export default function SpeciesTable() {
 
   const handleEdit = (speciesUUID: string) => {
     setEditingSpeciesUUID(speciesUUID);
+    setTimeout(() => {
+      editFormRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }, 50);
   };
 
   const handleCancelEdit = () => {
@@ -170,6 +177,7 @@ export default function SpeciesTable() {
 
       {editingSpeciesUUID && data && (
         <Box
+          ref={editFormRef}
           sx={{
             mt: 4,
             p: 3,

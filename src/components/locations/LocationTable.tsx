@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGetLocations } from "../../api/locations/useGetLocations";
 import { useDeleteLocation } from "../../api/locations/useDeleteLocation";
 import { useUpdateLocation } from "../../api/locations/useUpdateLocation";
@@ -27,6 +27,7 @@ export default function LocationTable() {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [type, setType] = useState("");
+  const editFormRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, isError, error } = useGetLocations();
   const deleteMutation = useDeleteLocation();
@@ -47,6 +48,12 @@ export default function LocationTable() {
 
   const handleEdit = (locationUUID: string) => {
     setEditingLocationUUID(locationUUID);
+    setTimeout(() => {
+      editFormRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }, 50);
   };
 
   const handleCancelEdit = () => {
@@ -173,6 +180,7 @@ export default function LocationTable() {
 
       {editingLocationUUID && data && (
         <Box
+          ref={editFormRef}
           sx={{
             mt: 4,
             p: 3,
