@@ -5,7 +5,6 @@ import TabChange from "../components/reusable/TabChange";
 import TabPanel from "../components/reusable/TabPanel";
 import CatchesTable from "../components/catches/CatchesTable";
 import CreateCatchForm from "../components/catches/CreateCatchForm";
-import UpdateCatchForm from "../components/catches/UpdateCatchForm";
 
 export default function Catches() {
   const [tabValue, setTabValue] = useState(0);
@@ -23,7 +22,6 @@ export default function Catches() {
       <TabChange tabValue={tabValue} handleTabChange={handleTabChange}>
         <Tab label="Pagavimų sąrašas" id="catches-tab-0" />
         <Tab label="Sukurti pagavimą" id="catches-tab-1" />
-        <Tab label="Atnaujinti pagavimą" id="catches-tab-2" />
       </TabChange>
       <Box sx={{ mt: 8 }} />
 
@@ -33,10 +31,6 @@ export default function Catches() {
 
       <TabPanel value={tabValue} index={1}>
         <CreateCatchForm />
-      </TabPanel>
-
-      <TabPanel value={tabValue} index={2}>
-        <UpdateCatchForm />
       </TabPanel>
     </Box>
   );
