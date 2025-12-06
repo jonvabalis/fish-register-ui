@@ -2,18 +2,17 @@ import { Button, MenuItem, TextField } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useCreateCatch } from "../../api/catches/useCreateCatch";
-import { useGetUsers } from "../../api/user/useGetUsers";
 import { useGetSpecies } from "../../api/species/useGetSpecies";
 import { useGetLocations } from "../../api/locations/useGetLocations";
 import { useGetRodsByUser } from "../../api/rods/useGetRodsByUser";
 import { BoxPaper } from "../reusable/BoxPaper";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface CreateCatchFormProps {
   onSuccess?: () => void;
 }
 
 const CreateCatchForm = ({ onSuccess }: CreateCatchFormProps) => {
-  const [selectedUserUUID, setSelectedUserUUID] = useState<string>("");
   const [nickname, setNickname] = useState<string>("");
   const [length, setLength] = useState<string>("");
   const [weight, setWeight] = useState<string>("");
@@ -23,16 +22,16 @@ const CreateCatchForm = ({ onSuccess }: CreateCatchFormProps) => {
   const [selectedLocationUUID, setSelectedLocationUUID] = useState<string>("");
   const [selectedRodUUID, setSelectedRodUUID] = useState<string>("");
 
-  const { data: usersData } = useGetUsers();
+  const { userUUID } = useAuth();
   const { data: speciesData } = useGetSpecies();
   const { data: locationsData } = useGetLocations();
-  const { data: rodsData } = useGetRodsByUser(selectedUserUUID);
+  const { data: rodsData } = useGetRodsByUser(userUUID || "");
   const createCatch = useCreateCatch();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedUserUUID || !caughtAt) {
+    if (!userUUID || !caughtAt) {
       toast.error("Užpildykite privalomus laukus");
       return;
     }
@@ -48,7 +47,7 @@ const CreateCatchForm = ({ onSuccess }: CreateCatchFormProps) => {
 
     createCatch.mutate(
       {
-        users_uuid: selectedUserUUID,
+        users_uuid: userUUID,
         caught_at: caughtAt + ":00Z",
         nickname: nickname || undefined,
         length: length ? parseFloat(length) : undefined,
@@ -81,22 +80,6 @@ const CreateCatchForm = ({ onSuccess }: CreateCatchFormProps) => {
   return (
     <BoxPaper>
       <form onSubmit={handleSubmit}>
-        <TextField
-          select
-          label="Vartotojas *"
-          value={selectedUserUUID}
-          onChange={(e) => setSelectedUserUUID(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
-        >
-          {usersData?.users.map((user) => (
-            <MenuItem key={user.uuid} value={user.uuid}>
-              {user.username} ({user.email})
-            </MenuItem>
-          ))}
-        </TextField>
-
         <TextField
           label="Data ir laikas *"
           type="datetime-local"
@@ -155,7 +138,6 @@ const CreateCatchForm = ({ onSuccess }: CreateCatchFormProps) => {
           onChange={(e) => setSelectedRodUUID(e.target.value)}
           fullWidth
           margin="normal"
-          disabled={!selectedUserUUID}
         >
           <MenuItem value="">Nėra</MenuItem>
           {rodsData?.rods.map((rod) => (

@@ -5,7 +5,6 @@ import TabPanel from "../components/reusable/TabPanel";
 import { BoxPaper } from "../components/reusable/BoxPaper";
 import LoginForm from "../components/auth/LoginForm";
 import RegisterForm from "../components/user/RegisterForm";
-import ChangeLoginForm from "../components/user/ChangeLoginForm";
 
 export default function Auth() {
   const [tabValue, setTabValue] = useState(0);
@@ -43,7 +42,6 @@ export default function Auth() {
         <TabChange tabValue={tabValue} handleTabChange={handleTabChange}>
           <Tab label="Prisijungti" />
           <Tab label="Registruotis" />
-          <Tab label="Keisti slaptažodį" />
         </TabChange>
 
         <TabPanel value={tabValue} index={0}>
@@ -52,10 +50,6 @@ export default function Auth() {
 
         <TabPanel value={tabValue} index={1}>
           <RegisterForm onSuccess={() => setTabValue(0)} />
-        </TabPanel>
-
-        <TabPanel value={tabValue} index={2}>
-          <ChangeLoginForm />
         </TabPanel>
       </BoxPaper>
     </Box>
