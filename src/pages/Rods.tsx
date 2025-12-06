@@ -5,7 +5,6 @@ import TabChange from "../components/reusable/TabChange";
 import TabPanel from "../components/reusable/TabPanel";
 import RodsTable from "../components/rods/RodsTable";
 import CreateRodForm from "../components/rods/CreateRodForm";
-import UpdateRodForm from "../components/rods/UpdateRodForm";
 
 export default function Rods() {
   const [tabValue, setTabValue] = useState(0);
@@ -23,7 +22,6 @@ export default function Rods() {
       <TabChange tabValue={tabValue} handleTabChange={handleTabChange}>
         <Tab label="Meškerių sąrašas" id="rods-tab-0" />
         <Tab label="Pridėti meškerę" id="rods-tab-1" />
-        <Tab label="Atnaujinti meškerę" id="rods-tab-2" />
       </TabChange>
       <Box sx={{ mt: 8 }} />
 
@@ -33,10 +31,6 @@ export default function Rods() {
 
       <TabPanel value={tabValue} index={1}>
         <CreateRodForm />
-      </TabPanel>
-
-      <TabPanel value={tabValue} index={2}>
-        <UpdateRodForm />
       </TabPanel>
     </Box>
   );

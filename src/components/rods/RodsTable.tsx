@@ -12,22 +12,79 @@ import {
   IconButton,
   TextField,
   MenuItem,
+  Button,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useState } from "react";
+import EditIcon from "@mui/icons-material/Edit";
+import { useState, useEffect } from "react";
 import { useGetRodsByUser } from "../../api/rods/useGetRodsByUser";
 import { useDeleteRod } from "../../api/rods/useDeleteRod";
+import { useUpdateRod } from "../../api/rods/useUpdateRod";
 import { useGetUsers } from "../../api/user/useGetUsers";
 import { BoxPaper } from "../reusable/BoxPaper";
 import { toast } from "react-toastify";
 
 export default function RodsTable() {
   const [selectedUserUUID, setSelectedUserUUID] = useState("");
+  const [editingRodUUID, setEditingRodUUID] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [brand, setBrand] = useState("");
+  const [purchasePlace, setPurchasePlace] = useState("");
 
   const { data: usersData } = useGetUsers();
   const { data, isLoading, isError, error } =
     useGetRodsByUser(selectedUserUUID);
   const deleteMutation = useDeleteRod();
+  const updateMutation = useUpdateRod();
+
+  useEffect(() => {
+    if (editingRodUUID && data) {
+      const rod = data.rods.find((r) => r.uuid === editingRodUUID);
+      if (rod) {
+        setNickname(rod.nickname || "");
+        setBrand(rod.brand || "");
+        setPurchasePlace(rod.purchasePlace || "");
+      }
+    }
+  }, [editingRodUUID, data]);
+
+  const handleEdit = (rodUUID: string) => {
+    setEditingRodUUID(rodUUID);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingRodUUID("");
+    setNickname("");
+    setBrand("");
+    setPurchasePlace("");
+  };
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!editingRodUUID) {
+      toast.error("Pasirinkite meškerę");
+      return;
+    }
+
+    updateMutation.mutate(
+      {
+        uuid: editingRodUUID,
+        nickname: nickname || undefined,
+        brand: brand || undefined,
+        purchasePlace: purchasePlace || undefined,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Meškerė sėkmingai atnaujinta!");
+          handleCancelEdit();
+        },
+        onError: () => {
+          toast.error("Nepavyko atnaujinti meškerės");
+        },
+      }
+    );
+  };
 
   const handleDelete = (uuid: string, nickname: string) => {
     if (window.confirm(`Ar tikrai norite ištrinti meškerę "${nickname}"?`)) {
@@ -110,9 +167,20 @@ export default function RodsTable() {
                   <TableCell>{rod.purchasePlace}</TableCell>
                   <TableCell align="center">
                     <IconButton
+                      color="primary"
+                      onClick={() => handleEdit(rod.uuid)}
+                      disabled={
+                        deleteMutation.isPending || updateMutation.isPending
+                      }
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
                       color="error"
                       onClick={() => handleDelete(rod.uuid, rod.nickname)}
-                      disabled={deleteMutation.isPending}
+                      disabled={
+                        deleteMutation.isPending || updateMutation.isPending
+                      }
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -122,6 +190,65 @@ export default function RodsTable() {
             </TableBody>
           </Table>
         </TableContainer>
+      )}
+
+      {editingRodUUID && data && (
+        <Box
+          sx={{
+            mt: 4,
+            p: 3,
+            border: "2px solid",
+            borderColor: "primary.main",
+            borderRadius: 2,
+          }}
+        >
+          <form onSubmit={handleUpdate}>
+            <TextField
+              label="Pavadinimas"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+
+            <TextField
+              label="Prekės ženklas"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+
+            <TextField
+              label="Pirkimo vieta"
+              value={purchasePlace}
+              onChange={(e) => setPurchasePlace(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+
+            <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={updateMutation.isPending}
+              >
+                Atnaujinti meškerę
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                fullWidth
+                onClick={handleCancelEdit}
+                disabled={updateMutation.isPending}
+              >
+                Atšaukti
+              </Button>
+            </Box>
+          </form>
+        </Box>
       )}
     </BoxPaper>
   );
