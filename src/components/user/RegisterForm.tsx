@@ -4,7 +4,11 @@ import { BoxPaper } from "../reusable/BoxPaper";
 import { useRegisterUser } from "../../api/user/useRegisterUser";
 import { toast } from "react-toastify";
 
-export default function RegisterForm() {
+interface RegisterFormProps {
+  onSuccess?: () => void;
+}
+
+export default function RegisterForm({ onSuccess }: RegisterFormProps) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +25,7 @@ export default function RegisterForm() {
           setEmail("");
           setUsername("");
           setPassword("");
+          onSuccess?.();
         },
         onError: () => {
           toast.error("Nepavyko užregistruoti vartotojo");

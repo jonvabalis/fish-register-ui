@@ -4,7 +4,13 @@ import { BoxPaper } from "../reusable/BoxPaper";
 import { useCreateSpecies } from "../../api/species/useCreateSpecies";
 import { toast } from "react-toastify";
 
-export default function CreateSpeciesForm() {
+interface CreateSpeciesFormProps {
+  onSuccess?: () => void;
+}
+
+export default function CreateSpeciesForm({
+  onSuccess,
+}: CreateSpeciesFormProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
@@ -19,6 +25,7 @@ export default function CreateSpeciesForm() {
           toast.success("Rūšis sėkmingai pridėta!");
           setName("");
           setDescription("");
+          onSuccess?.();
         },
         onError: (error) => {
           console.error("Error:", error);

@@ -5,7 +5,11 @@ import { useCreateRod } from "../../api/rods/useCreateRod";
 import { useGetUsers } from "../../api/user/useGetUsers";
 import { toast } from "react-toastify";
 
-export default function CreateRodForm() {
+interface CreateRodFormProps {
+  onSuccess?: () => void;
+}
+
+export default function CreateRodForm({ onSuccess }: CreateRodFormProps) {
   const [nickname, setNickname] = useState("");
   const [brand, setBrand] = useState("");
   const [purchasePlace, setPurchasePlace] = useState("");
@@ -25,6 +29,7 @@ export default function CreateRodForm() {
           setBrand("");
           setPurchasePlace("");
           setUserUUID("");
+          onSuccess?.();
         },
         onError: () => {
           toast.error("Nepavyko pridėti meškerės");

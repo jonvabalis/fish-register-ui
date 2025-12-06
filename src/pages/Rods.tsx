@@ -30,7 +30,7 @@ export default function Rods() {
       </TabPanel>
 
       <TabPanel value={tabValue} index={1}>
-        <CreateRodForm />
+        <CreateRodForm onSuccess={() => setTabValue(0)} />
       </TabPanel>
     </Box>
   );

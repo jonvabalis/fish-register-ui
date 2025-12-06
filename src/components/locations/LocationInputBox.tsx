@@ -4,7 +4,11 @@ import { BoxPaper } from "../reusable/BoxPaper";
 import { useLocationInput } from "../../api/locations/useLocationInput";
 import { toast } from "react-toastify";
 
-export default function LocationInputBox() {
+interface LocationInputBoxProps {
+  onSuccess?: () => void;
+}
+
+export default function LocationInputBox({ onSuccess }: LocationInputBoxProps) {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [type, setType] = useState("");
@@ -21,6 +25,7 @@ export default function LocationInputBox() {
           setName("");
           setAddress("");
           setType("");
+          onSuccess?.();
         },
         onError: () => {
           toast.error("Nepavyko pridėti telkinio");

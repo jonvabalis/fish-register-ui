@@ -34,7 +34,7 @@ export default function Species() {
       </TabPanel>
 
       <TabPanel value={tabValue} index={1}>
-        <CreateSpeciesForm />
+        <CreateSpeciesForm onSuccess={() => setTabValue(0)} />
       </TabPanel>
 
       <TabPanel value={tabValue} index={2}>

@@ -8,7 +8,11 @@ import { useGetLocations } from "../../api/locations/useGetLocations";
 import { useGetRodsByUser } from "../../api/rods/useGetRodsByUser";
 import { BoxPaper } from "../reusable/BoxPaper";
 
-const CreateCatchForm = () => {
+interface CreateCatchFormProps {
+  onSuccess?: () => void;
+}
+
+const CreateCatchForm = ({ onSuccess }: CreateCatchFormProps) => {
   const [selectedUserUUID, setSelectedUserUUID] = useState<string>("");
   const [nickname, setNickname] = useState<string>("");
   const [length, setLength] = useState<string>("");
@@ -65,6 +69,7 @@ const CreateCatchForm = () => {
           setSelectedSpeciesUUID("");
           setSelectedLocationUUID("");
           setSelectedRodUUID("");
+          onSuccess?.();
         },
         onError: () => {
           toast.error("Nepavyko sukurti pagavimo");

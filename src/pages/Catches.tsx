@@ -30,7 +30,7 @@ export default function Catches() {
       </TabPanel>
 
       <TabPanel value={tabValue} index={1}>
-        <CreateCatchForm />
+        <CreateCatchForm onSuccess={() => setTabValue(0)} />
       </TabPanel>
     </Box>
   );

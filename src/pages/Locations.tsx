@@ -29,7 +29,7 @@ export default function locations() {
         <LocationTable />
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        <LocationInputBox />
+        <LocationInputBox onSuccess={() => setTabValue(0)} />
       </TabPanel>
     </Box>
   );

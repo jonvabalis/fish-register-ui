@@ -32,7 +32,7 @@ export default function User() {
       </TabPanel>
 
       <TabPanel value={tabValue} index={1}>
-        <RegisterForm />
+        <RegisterForm onSuccess={() => setTabValue(0)} />
       </TabPanel>
 
       <TabPanel value={tabValue} index={2}>
