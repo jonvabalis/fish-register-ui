@@ -9,11 +9,18 @@ import User from "./pages/User.tsx";
 import Species from "./pages/Species.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import About from "./pages/About.tsx";
+import Auth from "./pages/Auth.tsx";
+import { useAuth } from "./contexts/AuthContext.tsx";
 
 function App() {
   const [open, setOpen] = useState(true);
   const toggleSidebar = () => setOpen(!open);
   const theme = useTheme();
+  const { token } = useAuth();
+
+  if (!token) {
+    return <Auth />;
+  }
 
   return (
     <>

@@ -27,8 +27,7 @@ export default function CreateSpeciesForm({
           setDescription("");
           onSuccess?.();
         },
-        onError: (error) => {
-          console.error("Error:", error);
+        onError: () => {
           toast.error("Nepavyko pridėti rūšies");
         },
       }

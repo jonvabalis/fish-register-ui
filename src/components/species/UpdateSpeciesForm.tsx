@@ -32,8 +32,7 @@ export default function UpdateSpeciesForm() {
         setName("");
         setDescription("");
       },
-      onError: (error) => {
-        console.error("Error:", error);
+      onError: () => {
         toast.error("Nepavyko atnaujinti rūšies");
       },
     });

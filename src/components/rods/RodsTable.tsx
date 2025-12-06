@@ -126,11 +126,17 @@ export default function RodsTable() {
             width: "400px",
           }}
         >
-          {usersData?.users?.map((user) => (
-            <MenuItem key={user.uuid} value={user.uuid}>
-              {user.username} ({user.email})
+          {usersData?.users && usersData.users.length > 0 ? (
+            usersData.users.map((user) => (
+              <MenuItem key={user.uuid} value={user.uuid}>
+                {user.username} ({user.email})
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem value="" disabled>
+              Kraunama...
             </MenuItem>
-          ))}
+          )}
         </TextField>
       </Box>
 

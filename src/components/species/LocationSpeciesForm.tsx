@@ -24,8 +24,7 @@ export default function LocationSpeciesForm() {
           setLocationUUID("");
           setSpeciesUUID("");
         },
-        onError: (error) => {
-          console.error("Error:", error);
+        onError: () => {
           toast.error("Nepavyko pridėti rūšies prie telkinio");
         },
       }

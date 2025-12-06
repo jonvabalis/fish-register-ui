@@ -1,6 +1,5 @@
 import { Box, Button, TextField, MenuItem } from "@mui/material";
 import { useState } from "react";
-import { BoxPaper } from "../reusable/BoxPaper";
 import { useChangeLogin } from "../../api/user/useChangeLogin";
 import { useGetUsers } from "../../api/user/useGetUsers";
 import { toast } from "react-toastify";
@@ -43,88 +42,56 @@ export default function ChangeLoginForm() {
   };
 
   return (
-    <BoxPaper>
-      <Box component="form" onSubmit={handleSubmit}>
-        <TextField
-          select
-          label="Pasirinkite vartotoją"
-          value={uuid}
-          onChange={(e) => setUuid(e.target.value)}
-          variant="outlined"
-          required
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mx: "auto",
-            mt: 6,
-            width: "400px",
-          }}
-        >
-          {usersData?.users?.map((user) => (
-            <MenuItem key={user.uuid} value={user.uuid}>
-              {user.username} ({user.email})
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          label="Naujas el. paštas (neprivaloma)"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          variant="outlined"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mx: "auto",
-            mt: 6,
-            width: "400px",
-          }}
-        />
-        <TextField
-          label="Naujas vartotojo vardas (neprivaloma)"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          variant="outlined"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mx: "auto",
-            mt: 6,
-            width: "400px",
-          }}
-        />
-        <TextField
-          label="Naujas slaptažodis (neprivaloma)"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          variant="outlined"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mx: "auto",
-            mt: 6,
-            width: "400px",
-          }}
-        />
-        <Box sx={{ mt: 8 }} />
-        <Button
-          variant="contained"
-          type="submit"
-          disabled={changeLoginMutation.isPending}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mx: "auto",
-            mb: 4,
-            px: 4,
-          }}
-        >
-          {changeLoginMutation.isPending
-            ? "Atnaujinama..."
-            : "Atnaujinti duomenis"}
-        </Button>
-      </Box>
-    </BoxPaper>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+      <TextField
+        select
+        label="Pasirinkite vartotoją"
+        value={uuid}
+        onChange={(e) => setUuid(e.target.value)}
+        fullWidth
+        margin="normal"
+        required
+      >
+        {usersData?.users?.map((user) => (
+          <MenuItem key={user.uuid} value={user.uuid}>
+            {user.username} ({user.email})
+          </MenuItem>
+        ))}
+      </TextField>
+      <TextField
+        label="Naujas el. paštas (neprivaloma)"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Naujas vartotojo vardas (neprivaloma)"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Naujas slaptažodis (neprivaloma)"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        fullWidth
+        margin="normal"
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        sx={{ mt: 2 }}
+        disabled={changeLoginMutation.isPending}
+      >
+        {changeLoginMutation.isPending
+          ? "Atnaujinama..."
+          : "Atnaujinti duomenis"}
+      </Button>
+    </Box>
   );
 }

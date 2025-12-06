@@ -5,13 +5,19 @@ import {
   type Theme,
   Divider,
   List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { DrawerHeader } from "./SidebarHelper";
 import { SIDEBAR_DATA } from "./SidebarData";
 import SidebarItemEntry from "./SidebarEntry";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface SidebarProps {
   open: boolean;
@@ -22,6 +28,7 @@ interface SidebarProps {
 export default function Sidebar({ open, toggleSidebar, theme }: SidebarProps) {
   const sidebarWidth = 240;
   const closedSidebarWidth = 64;
+  const { logout } = useAuth();
 
   return (
     <>
@@ -74,6 +81,36 @@ export default function Sidebar({ open, toggleSidebar, theme }: SidebarProps) {
             </NavLink>
           ))}
           <Divider />
+        </List>
+
+        <List>
+          <Divider />
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              onClick={logout}
+              sx={{
+                minHeight: 48,
+                px: 2.5,
+                justifyContent: "initial",
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  mr: 3,
+                  color: "primary.contrastText",
+                }}
+              >
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Atsijungti"
+                sx={{ opacity: 1, color: "primary.contrastText" }}
+              />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
     </>

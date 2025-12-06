@@ -1,33 +1,38 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useState } from "react";
-import { useRegisterUser } from "../../api/user/useRegisterUser";
 import { toast } from "react-toastify";
+import { useLogin } from "../../api/auth/useLogin";
+import { useAuth } from "../../contexts/AuthContext";
 
-interface RegisterFormProps {
-  onSuccess?: () => void;
-}
-
-export default function RegisterForm({ onSuccess }: RegisterFormProps) {
+export default function LoginForm() {
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { setToken } = useAuth();
+  const loginMutation = useLogin();
 
-  const registerMutation = useRegisterUser();
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    registerMutation.mutate(
-      { email, username, password },
+
+    if (!email || !password) {
+      toast.error("Užpildykite visus laukus");
+      return;
+    }
+
+    loginMutation.mutate(
+      { email, password },
       {
-        onSuccess: () => {
-          toast.success("Vartotojas sėkmingai užregistruotas!");
+        onSuccess: (data) => {
+          const token =
+            typeof data.token === "string" && data.token.startsWith("Bearer ")
+              ? data.token.substring(7)
+              : data.token;
+          setToken(token);
+          toast.success("Sėkmingai prisijungta!");
           setEmail("");
-          setUsername("");
           setPassword("");
-          onSuccess?.();
         },
         onError: () => {
-          toast.error("Nepavyko užregistruoti vartotojo");
+          toast.error("Nepavyko prisijungti");
         },
       }
     );
@@ -40,14 +45,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        fullWidth
-        margin="normal"
-        required
-      />
-      <TextField
-        label="Vartotojo vardas"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
         fullWidth
         margin="normal"
         required
@@ -66,9 +63,9 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
         variant="contained"
         fullWidth
         sx={{ mt: 2 }}
-        disabled={registerMutation.isPending}
+        disabled={loginMutation.isPending}
       >
-        {registerMutation.isPending ? "Registruojama..." : "Registruotis"}
+        {loginMutation.isPending ? "Jungiamasi..." : "Prisijungti"}
       </Button>
     </Box>
   );
