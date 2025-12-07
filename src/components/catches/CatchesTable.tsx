@@ -19,6 +19,7 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { useDeleteCatch } from "../../api/catches/useDeleteCatch";
 import { useUpdateCatch } from "../../api/catches/useUpdateCatch";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   useGetCatchesByUser,
   type Catch,
@@ -42,6 +43,8 @@ const CatchesTable = () => {
   const [selectedRodUUID, setSelectedRodUUID] = useState<string>("");
   const editFormRef = useRef<HTMLDivElement>(null);
 
+  const { userUUID, role } = useAuth();
+  const isAdmin = role === "admin";
   const { data: usersData } = useGetUsers();
   const { data: catchesData, isLoading } =
     useGetCatchesByUser(selectedUserUUID);
@@ -252,26 +255,30 @@ const CatchesTable = () => {
                       {formatDateTime(catchItem.created_at)}
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleEdit(catchItem.uuid)}
-                        disabled={
-                          deleteCatch.isPending || updateCatch.isPending
-                        }
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() =>
-                          handleDelete(catchItem.uuid, catchItem.nickname)
-                        }
-                        disabled={
-                          deleteCatch.isPending || updateCatch.isPending
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+                      {(isAdmin || catchItem.users_uuid === userUUID) && (
+                        <>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleEdit(catchItem.uuid)}
+                            disabled={
+                              deleteCatch.isPending || updateCatch.isPending
+                            }
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={() =>
+                              handleDelete(catchItem.uuid, catchItem.nickname)
+                            }
+                            disabled={
+                              deleteCatch.isPending || updateCatch.isPending
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

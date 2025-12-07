@@ -23,6 +23,7 @@ import { useUpdateRod } from "../../api/rods/useUpdateRod";
 import { useGetUsers } from "../../api/user/useGetUsers";
 import { BoxPaper } from "../reusable/BoxPaper";
 import { toast } from "react-toastify";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function RodsTable() {
   const [selectedUserUUID, setSelectedUserUUID] = useState("");
@@ -32,6 +33,8 @@ export default function RodsTable() {
   const [purchasePlace, setPurchasePlace] = useState("");
   const editFormRef = useRef<HTMLDivElement>(null);
 
+  const { userUUID, role } = useAuth();
+  const isAdmin = role === "admin";
   const { data: usersData } = useGetUsers();
   const { data, isLoading, isError, error } =
     useGetRodsByUser(selectedUserUUID);
@@ -179,24 +182,28 @@ export default function RodsTable() {
                   <TableCell>{rod.brand}</TableCell>
                   <TableCell>{rod.purchasePlace}</TableCell>
                   <TableCell align="center">
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEdit(rod.uuid)}
-                      disabled={
-                        deleteMutation.isPending || updateMutation.isPending
-                      }
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDelete(rod.uuid, rod.nickname)}
-                      disabled={
-                        deleteMutation.isPending || updateMutation.isPending
-                      }
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    {(isAdmin || rod.userUUID === userUUID) && (
+                      <>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleEdit(rod.uuid)}
+                          disabled={
+                            deleteMutation.isPending || updateMutation.isPending
+                          }
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDelete(rod.uuid, rod.nickname)}
+                          disabled={
+                            deleteMutation.isPending || updateMutation.isPending
+                          }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
