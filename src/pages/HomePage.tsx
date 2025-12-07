@@ -1,10 +1,14 @@
 import Box from "@mui/material/Box";
 import PageHeader from "../components/reusable/PageHeader";
 import TrophyCard from "../components/trophies/TrophyCard";
+import { Typography } from "@mui/material";
+import { useWebSocketMessage } from "../api/websocket/useWebSocketMessage";
 
 export default function HomePage() {
+  const message = useWebSocketMessage();
+
   return (
-    <Box width="100vw">
+    <Box width="100vw" sx={{ position: "relative", minHeight: "100vh" }}>
       <PageHeader text="Sveiki atvykę į pagrindinį puslapį!" />
 
       <Box
@@ -48,6 +52,23 @@ export default function HomePage() {
           fallbackImage="https://aquaforest.eu/wp-content/uploads/2025/06/blazenek-scaled.jpg"
         />
       </Box>
+
+      {message && (
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            textAlign: "center",
+            py: 1,
+          }}
+        >
+          <Typography variant="caption" color="text.secondary">
+            {message}
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 }
